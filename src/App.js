@@ -1,37 +1,45 @@
-import React, { useState } from 'react';
-import Beginning from "./components/Beginning/Beginning";
-import OnGoing from './components/OnGoing/OnGoing';
+import React, { useState } from "react";
+import ChosenStation from "./components/ChosenStation/ChosenStation";
+import StationList from "./components/StationList/StationList";
+import { stationData } from "./MOCK_DATA";
 
 const App = () => {
-  const [motChoisi, setMotChoisi] = useState("");
-  const [motCache, setMotCache] = useState("");
-  const arrMots = ["pomme","banane","liqueur","travail","delicieux","couteau", "fourchette","pied", "foudre", "ordinateur"];
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isGoing, setIsGoing] = useState(false);
-  const begin = () => {
-    let cache = "";
-    const intMotChoisi = Math.floor(Math.random()*9);
-    let choisi = arrMots[intMotChoisi];
-    const intLengthMot = choisi.length;
-    for(let intLoop=0; intLoop<intLengthMot; intLoop++){
-        cache = cache + "_";
-    }
-    console.log(intLengthMot);
-    
-    setMotCache(cache);
-    setMotChoisi(choisi);
-    console.log(cache);
-    setIsBeginning(false);
-    setIsGoing(true);
+  // vars de state
+  const [showStationList, setShowStationList] = useState(false);
+  const [randomChosen, setRandomChosen] = useState("");
+
+  const showRandomStation = () => {
+    setShowStationList(false);
+    let randomNumber = Math.floor(Math.random() * stationData.length);
+
+    setRandomChosen(stationData[randomNumber]);
+
+    console.log(randomNumber);
   };
+
+  const handleCallback = (chosenStation) => {
+    setShowStationList(false);
+    setRandomChosen(chosenStation);
+  };
+  
   return (
     <div>
-      <h1>Bonhomme Pendu</h1>
-      {isBeginning && (<Beginning begin={()=>begin()}/> )}
-     
-      {isGoing && (<OnGoing motChoisi={motChoisi} motCache={motCache}/>)}
+      <header>
+        <h1>Freego</h1>
+        <h2>Vous ne savez pas où aller dans Paris?</h2>
+        <p>Cliquez et découvrez par quelle station du métro parisien passer!</p>
+      </header>
+
+      <button onClick={() => showRandomStation()}>Choisir une station</button>
+      <button onClick={() => setShowStationList(!showStationList)}>
+        Je veux voir toutes les stations de la ville
+      </button>
+      {randomChosen !== "" && <ChosenStation station={randomChosen} />}
+      {showStationList && (
+        <StationList stations={stationData} handleCallback={handleCallback} />
+      )}
     </div>
   );
-}
+};
 
 export default App;
